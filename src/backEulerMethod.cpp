@@ -1,51 +1,50 @@
-///////////////////////////////////////////////////////////////////////////////
-// Backward Euler Method for Solving an ODE
-//
-// y' = f(t,y), a < t < b,
-// y(a) = y0
-//
-// Inputs:
-//   f          The name of the function "f" in the ODE
-//   dyf        The name of the partial derivative of "f" with respect to y
-//   y          Space for the solution (with correct size on input)
-//   y0         Initial condition
-//   a          Initial time
-//   b          Final time
-//   newtonTol  Tolerance for Newton's Method (stop after 10 iterations)
-// Outputs:
-//   y          The solution (at equally spaced points)
-// Return:
-//   0          If all okay
-//   1          If Newton fails to converge
-///////////////////////////////////////////////////////////////////////////////
-#include "backEulerMethod.h"
 #include <cmath>
-using namespace std;
+#include <limits>
 
-int backEulerMethod(double f(double,double), double dyf(double,double), vector<double>& y,
-		     double y0, double a, double b, double newtonTol) {
-  int n = y.size()-1;
-  double h = (b-a)/n;
+#include "backEulerMethod.h"
 
-  double t = a;
-  y[0] = y0;
 
-  for(int i=0; i<n; i++) {
-    t += h;
+/**
+ * Uses the backward Euler method to solve an ODE of the form:
+ *
+ *      y' = f(t, y), t0 < t < t1
+ *
+ * From the initial condition:
+ *
+ *      y(t0) = y0
+ *
+ * @param f the function `f`. The first argument corresponds to t and second to y.
+ * @param fy partial derivative of `f` with respect to `y`. The first argument corresponds to t and second to y.
+ * @param y vector to store result (must have correct size).
+ * @param y0 initial condition.
+ * @param t0 initial time.
+ * @param t1 final time.
+ * @param tolerance the tolerance for Newton's method.
+ * @param maxIterations the maximum number of iterations for Newton's method.
+ * @return STATUS_OK if method succeeds, STATUS_ERROR_NEWTON_FAILS_TO_CONVERGE if Newton's method fails to converge.
+ */
+EulerStatus backwardsEulerMethod(const function &f, const function &fy, std::vector<double> &y, double y0, double t0,
+                                 double t1, double tolerance, int maxIterations) {
+    auto n = y.size() - 1;
+    auto h = (t1 - t0) / n;
 
-    // Newton loop
-    double yy = y[i];
-    int iteration = 0;
-    while(1) {
-      double dyy = - (yy - h*f(t,yy) - y[i]) / (1 - h*dyf(t,yy));
-      yy += dyy;
+    auto t = t0;
+    y[0] = y0;
 
-      if(fabs(dyy) <= newtonTol) break;
-      iteration++;
-      if(iteration >= 10) return 1;
+    for (auto i = 0; i < n; i++) {
+        t += h;
+
+        // Newton loop
+        // TODO: Come up with a better name for yy and dyy.
+        auto yy = y[i];
+        auto dyy = std::numeric_limits<double>::infinity();
+        for(auto iteration = 0; fabs(dyy) > tolerance; iteration++) {
+            dyy = -(yy - h * f(t, yy) - y[i]) / (1 - h * fy(t, yy));
+            yy += dyy;
+            if (iteration >= maxIterations) return STATUS_ERROR_NEWTON_FAILS_TO_CONVERGE;
+        }
+
+        y[i + 1] = yy;
     }
-    y[i+1] = yy;
-  }
-  return 0;
+    return STATUS_OK;
 }
-  

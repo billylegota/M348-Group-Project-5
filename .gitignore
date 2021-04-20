@@ -183,3 +183,6 @@ codegen/
 octave-workspace
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,clion+all,cmake,matlab
+
+# Custom:
+*.png

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(Chapter_6)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 20)
 
 # See: https://cliutils.gitlab.io/modern-cmake/chapters/projects/submodule.html
 find_package(Git QUIET)
@@ -22,3 +22,4 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/thirdparty/exprtk/)
 
 add_executable(Chapter6 src/Main.cpp src/BackwardEulerMethod.cpp src/TrapezoidalMethod.cpp src/Util.cpp)
+add_executable(PredatorPrey src/PredatorPrey.cpp src/TrapezoidalMethod.cpp src/Util.cpp)

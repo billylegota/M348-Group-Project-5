@@ -21,5 +21,5 @@ endif()
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/thirdparty/exprtk/)
 
-add_executable(Chapter6 src/Main.cpp src/BackwardEulerMethod.cpp src/TrapezoidalMethod.cpp src/Util.cpp)
+add_executable(Chapter6 src/Main.cpp src/BackwardEulerMethod.cpp src/RungeKuttaMethod.cpp src/TrapezoidalMethod.cpp src/Util.cpp)
 add_executable(PredatorPrey src/PredatorPrey.cpp src/TrapezoidalMethod.cpp src/Util.cpp)
